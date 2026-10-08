@@ -1,0 +1,6 @@
+{
+  "name": "Kinetic Pulse",
+  "description": "Elite athletic performance and bio-adaptive training platform combining physiological readiness, interval telemetry, and metabolic periodization.",
+  "requestFramePermissions": ["microphone", "geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

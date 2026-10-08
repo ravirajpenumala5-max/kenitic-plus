@@ -1,0 +1,253 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Pillar 1: Global Default-Deny Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Core Primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Validation Blueprint: WorkoutLog
+    function isValidWorkoutLog(data) {
+      return data.keys().hasAll([
+        'ownerId',
+        'date',
+        'title',
+        'discipline',
+        'durationMin',
+        'avgHrBpm',
+        'maxHrBpm',
+        'normalizedPowerWatts',
+        'strainIndex',
+        'rpe',
+        'status',
+        'notes',
+        'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'ownerId',
+        'date',
+        'title',
+        'discipline',
+        'durationMin',
+        'avgHrBpm',
+        'maxHrBpm',
+        'normalizedPowerWatts',
+        'strainIndex',
+        'rpe',
+        'status',
+        'notes',
+        'createdAt'
+      ]) &&
+      data.ownerId is string &&
+      data.ownerId.size() >= 1 &&
+      data.ownerId.size() <= 128 &&
+      data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.ownerId == request.auth.uid &&
+      data.date is string &&
+      data.date.size() >= 1 &&
+      data.date.size() <= 40 &&
+      data.title is string &&
+      data.title.size() >= 1 &&
+      data.title.size() <= 120 &&
+      data.discipline is string &&
+      data.discipline.size() <= 40 &&
+      data.discipline in ['Track & Sprint', 'Strength', 'Cycling', 'Threshold'] &&
+      data.durationMin is number &&
+      data.durationMin >= 1 &&
+      data.durationMin <= 1440 &&
+      data.avgHrBpm is number &&
+      data.avgHrBpm >= 30 &&
+      data.avgHrBpm <= 240 &&
+      data.maxHrBpm is number &&
+      data.maxHrBpm >= 30 &&
+      data.maxHrBpm <= 250 &&
+      data.normalizedPowerWatts is number &&
+      data.normalizedPowerWatts >= 0 &&
+      data.normalizedPowerWatts <= 2500 &&
+      data.strainIndex is number &&
+      data.strainIndex >= 0 &&
+      data.strainIndex <= 21 &&
+      data.rpe is number &&
+      data.rpe >= 1 &&
+      data.rpe <= 10 &&
+      data.status is string &&
+      data.status.size() <= 40 &&
+      data.status in ['Optimal', 'Peak Stimulus', 'Recovery'] &&
+      data.notes is string &&
+      data.notes.size() >= 1 &&
+      data.notes.size() <= 500 &&
+      data.createdAt is timestamp;
+    }
+
+    // Validation Blueprint: CustomProtocol
+    function isValidCustomProtocol(data) {
+      return data.keys().hasAll([
+        'ownerId',
+        'title',
+        'category',
+        'durationMin',
+        'targetStrain',
+        'targetWatts',
+        'targetHrZone',
+        'description',
+        'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'ownerId',
+        'title',
+        'category',
+        'durationMin',
+        'targetStrain',
+        'targetWatts',
+        'targetHrZone',
+        'description',
+        'createdAt'
+      ]) &&
+      data.ownerId is string &&
+      data.ownerId.size() >= 1 &&
+      data.ownerId.size() <= 128 &&
+      data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.ownerId == request.auth.uid &&
+      data.title is string &&
+      data.title.size() >= 1 &&
+      data.title.size() <= 120 &&
+      data.category is string &&
+      data.category.size() <= 40 &&
+      data.category in ['VO2 Max', 'Lactate Threshold', 'Neuromuscular Power', 'Active Recovery'] &&
+      data.durationMin is number &&
+      data.durationMin >= 1 &&
+      data.durationMin <= 600 &&
+      data.targetStrain is number &&
+      data.targetStrain >= 0 &&
+      data.targetStrain <= 21 &&
+      data.targetWatts is number &&
+      data.targetWatts >= 0 &&
+      data.targetWatts <= 2500 &&
+      data.targetHrZone is string &&
+      data.targetHrZone.size() >= 1 &&
+      data.targetHrZone.size() <= 80 &&
+      data.description is string &&
+      data.description.size() >= 1 &&
+      data.description.size() <= 500 &&
+      data.createdAt is timestamp;
+    }
+
+    // Validation Blueprint: FuelingEntry
+    function isValidFuelingEntry(data) {
+      return data.keys().hasAll([
+        'ownerId',
+        'time',
+        'title',
+        'timingPhase',
+        'carbsG',
+        'proteinG',
+        'fatG',
+        'sodiumMg',
+        'kcal',
+        'createdAt'
+      ]) &&
+      data.keys().hasOnly([
+        'ownerId',
+        'time',
+        'title',
+        'timingPhase',
+        'carbsG',
+        'proteinG',
+        'fatG',
+        'sodiumMg',
+        'kcal',
+        'createdAt'
+      ]) &&
+      data.ownerId is string &&
+      data.ownerId.size() >= 1 &&
+      data.ownerId.size() <= 128 &&
+      data.ownerId.matches('^[a-zA-Z0-9_\\-]+$') &&
+      data.ownerId == request.auth.uid &&
+      data.time is string &&
+      data.time.size() >= 1 &&
+      data.time.size() <= 40 &&
+      data.title is string &&
+      data.title.size() >= 1 &&
+      data.title.size() <= 120 &&
+      data.timingPhase is string &&
+      data.timingPhase.size() <= 40 &&
+      data.timingPhase in ['Pre-Session', 'Intra-Workout', 'Post-Recovery', 'Basal Meal'] &&
+      data.carbsG is number &&
+      data.carbsG >= 0 &&
+      data.carbsG <= 1000 &&
+      data.proteinG is number &&
+      data.proteinG >= 0 &&
+      data.proteinG <= 500 &&
+      data.fatG is number &&
+      data.fatG >= 0 &&
+      data.fatG <= 500 &&
+      data.sodiumMg is number &&
+      data.sodiumMg >= 0 &&
+      data.sodiumMg <= 15000 &&
+      data.kcal is number &&
+      data.kcal >= 0 &&
+      data.kcal <= 15000 &&
+      data.createdAt is timestamp;
+    }
+
+    // Collection: workoutLogs
+    match /workoutLogs/{logId} {
+      allow get: if isSignedIn() && isValidId(logId) && existing().ownerId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isVerifiedUser() && isValidId(logId) && isValidWorkoutLog(incoming()) && incoming().createdAt == request.time;
+      allow update: if isVerifiedUser() && isValidId(logId) && isValidWorkoutLog(incoming()) &&
+        existing().ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['notes', 'rpe', 'status', 'title']);
+      allow delete: if isVerifiedUser() && isValidId(logId) && existing().ownerId == request.auth.uid;
+    }
+
+    // Collection: protocols
+    match /protocols/{protocolId} {
+      allow get: if isSignedIn() && isValidId(protocolId) && existing().ownerId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isVerifiedUser() && isValidId(protocolId) && isValidCustomProtocol(incoming()) && incoming().createdAt == request.time;
+      allow update: if isVerifiedUser() && isValidId(protocolId) && isValidCustomProtocol(incoming()) &&
+        existing().ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['title', 'durationMin', 'targetWatts', 'description']);
+      allow delete: if isVerifiedUser() && isValidId(protocolId) && existing().ownerId == request.auth.uid;
+    }
+
+    // Collection: fuelingEntries
+    match /fuelingEntries/{entryId} {
+      allow get: if isSignedIn() && isValidId(entryId) && existing().ownerId == request.auth.uid;
+      allow list: if isSignedIn() && resource.data.ownerId == request.auth.uid;
+      allow create: if isVerifiedUser() && isValidId(entryId) && isValidFuelingEntry(incoming()) && incoming().createdAt == request.time;
+      allow update: if isVerifiedUser() && isValidId(entryId) && isValidFuelingEntry(incoming()) &&
+        existing().ownerId == request.auth.uid &&
+        incoming().ownerId == existing().ownerId &&
+        incoming().createdAt == existing().createdAt &&
+        incoming().diff(existing()).affectedKeys().hasOnly(['title', 'carbsG', 'proteinG', 'fatG', 'sodiumMg', 'kcal']);
+      allow delete: if isVerifiedUser() && isValidId(entryId) && existing().ownerId == request.auth.uid;
+    }
+  }
+}

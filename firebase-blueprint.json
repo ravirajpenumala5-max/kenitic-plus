@@ -1,0 +1,247 @@
+{
+  "entities": {
+    "WorkoutLog": {
+      "title": "WorkoutLog",
+      "description": "Completed athletic training session telemetry record owned by an authenticated athlete.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the athlete who owns this log.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "date": {
+          "type": "string",
+          "description": "Human-readable session date.",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "title": {
+          "type": "string",
+          "description": "Workout session title.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "discipline": {
+          "type": "string",
+          "description": "Athletic training discipline.",
+          "enum": ["Track & Sprint", "Strength", "Cycling", "Threshold"],
+          "maxLength": 40
+        },
+        "durationMin": {
+          "type": "number",
+          "description": "Duration of the workout in minutes."
+        },
+        "avgHrBpm": {
+          "type": "number",
+          "description": "Average heart rate in beats per minute."
+        },
+        "maxHrBpm": {
+          "type": "number",
+          "description": "Maximum heart rate in beats per minute."
+        },
+        "normalizedPowerWatts": {
+          "type": "number",
+          "description": "Normalized mechanical power in watts."
+        },
+        "strainIndex": {
+          "type": "number",
+          "description": "21-point cardiovascular strain score."
+        },
+        "rpe": {
+          "type": "number",
+          "description": "Rate of Perceived Exertion from 1 to 10."
+        },
+        "status": {
+          "type": "string",
+          "description": "Physiological training status outcome.",
+          "enum": ["Optimal", "Peak Stimulus", "Recovery"],
+          "maxLength": 40
+        },
+        "notes": {
+          "type": "string",
+          "description": "Telemetry and coaching notes.",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the record was created."
+        }
+      },
+      "required": [
+        "ownerId",
+        "date",
+        "title",
+        "discipline",
+        "durationMin",
+        "avgHrBpm",
+        "maxHrBpm",
+        "normalizedPowerWatts",
+        "strainIndex",
+        "rpe",
+        "status",
+        "notes",
+        "createdAt"
+      ]
+    },
+    "CustomProtocol": {
+      "title": "CustomProtocol",
+      "description": "Custom bio-adaptive interval protocol created by an athlete in the Training Lab.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the athlete who created this protocol.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "title": {
+          "type": "string",
+          "description": "Protocol title.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "category": {
+          "type": "string",
+          "description": "Target physiological system.",
+          "enum": ["VO2 Max", "Lactate Threshold", "Neuromuscular Power", "Active Recovery"],
+          "maxLength": 40
+        },
+        "durationMin": {
+          "type": "number",
+          "description": "Total duration in minutes."
+        },
+        "targetStrain": {
+          "type": "number",
+          "description": "Predicted strain score."
+        },
+        "targetWatts": {
+          "type": "number",
+          "description": "Target normalized power in watts."
+        },
+        "targetHrZone": {
+          "type": "string",
+          "description": "Target heart rate zone descriptor.",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "description": {
+          "type": "string",
+          "description": "Protocol physiological description.",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the protocol was created."
+        }
+      },
+      "required": [
+        "ownerId",
+        "title",
+        "category",
+        "durationMin",
+        "targetStrain",
+        "targetWatts",
+        "targetHrZone",
+        "description",
+        "createdAt"
+      ]
+    },
+    "FuelingEntry": {
+      "title": "FuelingEntry",
+      "description": "Metabolic fueling and electrolyte log entry.",
+      "type": "object",
+      "properties": {
+        "ownerId": {
+          "type": "string",
+          "description": "Firebase Auth UID of the athlete who logged this meal.",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "time": {
+          "type": "string",
+          "description": "Time of intake.",
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "title": {
+          "type": "string",
+          "description": "Meal or hydrogel description.",
+          "minLength": 1,
+          "maxLength": 120
+        },
+        "timingPhase": {
+          "type": "string",
+          "description": "Nutrient timing phase relative to training.",
+          "enum": ["Pre-Session", "Intra-Workout", "Post-Recovery", "Basal Meal"],
+          "maxLength": 40
+        },
+        "carbsG": {
+          "type": "number",
+          "description": "Carbohydrates in grams."
+        },
+        "proteinG": {
+          "type": "number",
+          "description": "Protein in grams."
+        },
+        "fatG": {
+          "type": "number",
+          "description": "Dietary fat in grams."
+        },
+        "sodiumMg": {
+          "type": "number",
+          "description": "Sodium electrolyte in milligrams."
+        },
+        "kcal": {
+          "type": "number",
+          "description": "Total energy in kilocalories."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when the fueling entry was logged."
+        }
+      },
+      "required": [
+        "ownerId",
+        "time",
+        "title",
+        "timingPhase",
+        "carbsG",
+        "proteinG",
+        "fatG",
+        "sodiumMg",
+        "kcal",
+        "createdAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/workoutLogs/{logId}": {
+      "schema": {
+        "$ref": "#/entities/WorkoutLog"
+      },
+      "description": "Stores athlete workout logs restricted strictly to the authenticated owner."
+    },
+    "/protocols/{protocolId}": {
+      "schema": {
+        "$ref": "#/entities/CustomProtocol"
+      },
+      "description": "Stores custom training protocols restricted strictly to the authenticated owner."
+    },
+    "/fuelingEntries/{entryId}": {
+      "schema": {
+        "$ref": "#/entities/FuelingEntry"
+      },
+      "description": "Stores metabolic fueling entries restricted strictly to the authenticated owner."
+    }
+  }
+}
